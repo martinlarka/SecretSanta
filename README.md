@@ -1,4 +1,7 @@
 SecretSanta
 ===========
 
-A simple Secret santa calculator written in Java. Uses sms api to send out the results.
+A repo of simple Secret santa calculators.
+
+2014 - Java
+2016 - Go
