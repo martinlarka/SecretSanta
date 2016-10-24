@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html ng-app="santaApp">
+	<head>
+		<meta charset="UTF-8">
+		<title>Secret Santa -16</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+	</head>
+	<body>
+		<div ng-controller="santaCtrl">
+			<h1>SantaApp</h1>
+			<label for="name">Namn</label>
+			<input type="text" name="name" ng-model="santaName"/>
+			<button ng-click="addSanta()">Add santa</button>
+			<li style="list-style-type:none">
+				<ul ng-repeat="santa in santas">
+					<p>🎅 &ensp;{{santa.name}}&nbsp;<input type="checkbox" ng-model="santa.selected"> {{mapSantaNames(santa.exclude)}} <button ng-click="updateExcluded(santa)">Update</button></p>
+				</ul>
+			</li>
+		</div>	
+		<script type="text/javascript">
+				var app = angular.module('santaApp', []);
+				app.controller('santaCtrl', function($scope) {
+					$scope.idItterator = 0;
+					$scope.santas = [];
+					$scope.addSanta = function() {
+						$scope.santas.push({id: $scope.idItterator++, name: $scope.santaName, selected: false, exclude: $scope.excludedIds()});
+						$scope.santaName = "";
+					};
+					$scope.excludedIds = function(self) {
+						var out = [];
+						angular.forEach($scope.santas, function(s) {
+							if (s.selected == true && s != self) {
+								out.push(s);
+							}
+							s.selected = false; // Reset checkbox
+						});
+						return out;
+					};
+					$scope.updateExcluded = function(self) {
+						self.exclude = $scope.excludedIds(self);
+					}
+					$scope.mapSantaNames = function(santa) {
+						var names = santa.map(function(s){return s.name});
+						return '['+names.join()+']';
+					}
+				});
+		</script>
+	</body>
+</html>
