@@ -1,4 +1,5 @@
-SecretSanta
+SecretSanta in Java
 ===========
 
-A simple Secret santa calculator written in Java. Uses sms api to send out the results.
+Java implementation x-mas 2014.
+Console input, and SMS notification
