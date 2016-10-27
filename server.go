@@ -9,9 +9,7 @@ import (
 )
 
 func calcSantas(w http.ResponseWriter, r *http.Request) {
-	var santa []Santa
-	
-	fmt.Fprintf(w, "Hi there, I love %s!", r.URL.Path[1:])
+	var santas []Santa
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -19,14 +17,15 @@ func calcSantas(w http.ResponseWriter, r *http.Request) {
 	if err := r.Body.Close(); err != nil {
 		panic(err)
 	}
-	if err := json.Unmarshal(body, &santa); err != nil {
+	if err := json.Unmarshal(body, &santas); err != nil {
 		w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 		w.WriteHeader(422) // unprocessable entity
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
 		}
 	}
-	fmt.Println(santa)
+	fmt.Println(santas)
+	fmt.Fprintf(w, "Hi there, I love %s! \n", r.URL.Path[1:], santas)
 }
 
 func main() {

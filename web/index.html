@@ -9,24 +9,29 @@
 		<div ng-controller="santaCtrl">
 			<h1>SantaApp</h1>
 			<label for="name">Namn</label>
-			<input type="text" name="name" ng-model="santaName"/>
+			<input type="text" name="name" ng-model="name"/>
+			<label for="name">Telefon</label>
+			<input type="text" name="number" ng-model="phone"/>
 			<button ng-click="addSanta()">Add santa</button>
 			<li style="list-style-type:none">
 				<ul ng-repeat="santa in santas">
 					<p>🎅 &ensp;{{santa.name}}&nbsp;<input type="checkbox" ng-model="santa.selected"> {{mapSantaNames(santa.exclude)}} <button ng-click="updateExcluded(santa)">Update</button></p>
 				</ul>
 			</li>
+			<br>
+			<button ng-click="sendSantas()">Send secret santas!</button>
 		</div>	
 		<script type="text/javascript">
 				var app = angular.module('santaApp', []);
-				app.controller('santaCtrl', function($scope) {
+				app.controller('santaCtrl', function($scope, $http) {
 					$scope.idItterator = 0;
 					$scope.santas = [];
 					$scope.addSanta = function() {
-						$scope.santas.push({id: $scope.idItterator++, name: $scope.santaName, selected: false, exclude: $scope.excludedIds()});
-						$scope.santaName = "";
+						$scope.santas.push({id: $scope.idItterator++, name: $scope.name, phone: $scope.phone, selected: false, exclude: $scope.excludedSantas()});
+						$scope.name = "";
+						$scope.phone = "";
 					};
-					$scope.excludedIds = function(self) {
+					$scope.excludedSantas = function(self) {
 						var out = [];
 						angular.forEach($scope.santas, function(s) {
 							if (s.selected == true && s != self) {
@@ -37,11 +42,22 @@
 						return out;
 					};
 					$scope.updateExcluded = function(self) {
-						self.exclude = $scope.excludedIds(self);
+						self.exclude = $scope.excludedSantas(self);
 					}
 					$scope.mapSantaNames = function(santa) {
 						var names = santa.map(function(s){return s.name});
 						return '['+names.join()+']';
+					}
+					$scope.sendSantas = function() {
+						console.log("CalcSanta");
+						angular.forEach($scope.santas, function(s) {
+							s.exclude = s.exclude.map(function(e) {
+								return e.id;
+							});
+						});
+						return $http.post("http://localhost:3000/santa/", $scope.santas).then(function(r) {
+							console.log(r);
+						}, function(e) {console.log(e)});
 					}
 				});
 		</script>
