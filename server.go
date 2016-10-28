@@ -24,8 +24,31 @@ func calcSantas(w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 	}
+	// Fill seletable santas
+	for i := range santas {
+		santas[i].Selectable = selectableSantas(santas[i], santas)
+	}
+
 	fmt.Println(santas)
-	fmt.Fprintf(w, "Hi there, I love %s! \n", r.URL.Path[1:], santas)
+}
+
+func selectableSantas(santa Santa, santas []Santa) []int {
+	selectable := make([]int, 0)
+	for i := range santas {
+		if !excludeSanta(santa, santas[i]) {
+			selectable = append(selectable, santas[i].Id)
+		}
+	}
+	return selectable
+}
+
+func excludeSanta(self Santa, other Santa) bool {
+	for i := range self.Exclude {
+		if self.Exclude[i] == other.Id || self.Id == other.Id {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
