@@ -1,0 +1,2 @@
+#!/bin/bash
+curl -X POST -H "Content-Type: application/json" -d '[{"name":"santa1", "phone":"123", "exclude":[2,3,4,5], "id":0},{"name":"santa2", "phone":"1233", "exclude":[2,3,4,5], "id":1},{"name":"santa3", "phone":"1233", "exclude":[1,3,4,5], "id":2},{"name":"santa4", "phone":"1233", "exclude":[2,1,4,5], "id":3},{"name":"santa5", "phone":"1233", "exclude":[1,2,3,4,5], "id":4},{"name":"santa6", "phone":"1243", "exclude":[0,2,3,4,5], "id":5}]' "http://localhost:3000/santa/"
