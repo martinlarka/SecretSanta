@@ -1,12 +1,15 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
 	"io/ioutil"
 	"math/rand"
 	"net/http"
+	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -45,6 +48,7 @@ func calcSantas(w http.ResponseWriter, r *http.Request) {
 		} else {
 			w.WriteHeader(200)
 			printSantas(santas)
+			sendSMS(santas[0], santas[1])
 		}
 	}
 }
@@ -108,25 +112,26 @@ func printSantas(santas []Santa) {
 
 // Send sms with 49elks API
 func sendSMS(from Santa, to Santa) {
+	fmt.Printf("Sending sms to %s on %s", from.Name, from.Phone)
 	data := url.Values{
-        "from": {"Tomteverkstan"},
+        "from": {"Nordpolen"},
         "to": {from.Phone},
-        "message":{fmt.Sprintf("Hej %s, du ska köpa ett paket till %s. God jul!", from.Name, to.Name)}}
+        "message":{fmt.Sprintf("Hej %s, du ska köpa ett paket till %s. God jul! 🎅🎅🎅🎅", from.Name, to.Name)}} 
+  req, err := http.NewRequest("POST", "https://api.46elks.com/a1/SMS", bytes.NewBufferString(data.Encode()))
+  req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+  req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
+  req.SetBasicAuth("<API Username>", "<API Password>")
 
-    req, err := http.NewRequest("POST", "https://api.46elks.com/a1/SMS", bytes.NewBufferString(data.Encode()))
-    req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
-    req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
-    req.SetBasicAuth("<API Username>", "<API Password>")
+  client := &http.Client{}
+  resp, err := client.Do(req)
 
-    client := &http.Client{}
-    resp, err := client.Do(req)
+  defer resp.Body.Close()
+  body, err := ioutil.ReadAll(resp.Body)
 
-    defer resp.Body.Close()
-    _, err := ioutil.ReadAll(resp.Body)
-
-    if err != nil {
-        fmt.Println("Oh dear!!!")
-    }
+  if err != nil {
+      fmt.Println("Oh dear!!!")
+	}
+	fmt.Println(string(body))
 }
 
 // Main function
