@@ -54,10 +54,13 @@
 							s.exclude = s.exclude.map(function(e) {
 								return e.id;
 							});
+							s.selected = undefined;
 						});
 						return $http.post("http://localhost:3000/santa/", $scope.santas).then(function(r) {
 							console.log(r);
-						}, function(e) {console.log(e)});
+						}, function(e) {
+							console.log(e)
+						});
 					}
 				});
 		</script>

@@ -7,6 +7,7 @@ type Santa struct {
 	Selectable	[]int
 	Selected	int
 	Exclude   	[]int     `json:"exclude"`
+	//Shit	bool	`json:"selected"`
 }
 
 type Santas []Santa

@@ -10,10 +10,12 @@ import (
 	"time"
 )
 
+const MAXITTERATIONS = 1000
+
 // Http handler to calc secret santas from json
 func calcSantas(w http.ResponseWriter, r *http.Request) {
 	var santas []Santa
-	itterations := 0
+	itterations := 1
 	rand.Seed(time.Now().UTC().UnixNano())
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
@@ -28,17 +30,25 @@ func calcSantas(w http.ResponseWriter, r *http.Request) {
 		if err := json.NewEncoder(w).Encode(err); err != nil {
 			panic(err)
 		}
-	}
-	// Generate secret santas
-	for (!generateSantas(santas) && itterations < 50) {
-		itterations++
-		for i := range santas {
-			santas[i].Selectable = nil
-			santas[i].Selected = santas[i].Id
+	} else {
+		// Generate secret santas
+		for (!generateSantas(santas) && itterations < MAXITTERATIONS) {
+			itterations++
+			for i := range santas {
+				santas[i].Selectable = nil
+				santas[i].Selected = santas[i].Id
+			}
 		}
+
+		if (itterations == MAXITTERATIONS) {
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			w.WriteHeader(417)
+		} else {
+			w.WriteHeader(200)
+			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+		}
+		json.NewEncoder(w).Encode(fmt.Sprintf("{itterations: %d}", itterations))
 	}
-	fmt.Printf("itterations: %d\n", itterations)
-	printSantas(santas)		
 }
 
 // Generate selected santas for each santa
