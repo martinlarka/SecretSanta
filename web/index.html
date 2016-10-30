@@ -9,7 +9,7 @@
 		<div ng-controller="santaCtrl">
 			<h1>SantaApp</h1>
 			<label for="name">Namn</label>
-			<input type="text" name="name" ng-model="name"/>
+			<input type="text" name="name" id="name-input" ng-model="name"/>
 			<label for="name">Telefon</label>
 			<input type="text" name="number" ng-model="phone"/>
 			<button ng-click="addSanta()">Add santa</button>
@@ -20,16 +20,20 @@
 			</li>
 			<br>
 			<button ng-click="sendSantas()">Send secret santas!</button>
+			<br>
+			<div ng-show="response">{{response}}</div>
 		</div>	
 		<script type="text/javascript">
 				var app = angular.module('santaApp', []);
 				app.controller('santaCtrl', function($scope, $http) {
 					$scope.idItterator = 0;
 					$scope.santas = [];
+					$scope.response = null;
 					$scope.addSanta = function() {
 						$scope.santas.push({id: $scope.idItterator++, name: $scope.name, phone: $scope.phone, selected: false, exclude: $scope.excludedSantas()});
 						$scope.name = "";
 						$scope.phone = "";
+						document.getElementById("name-input").focus();
 					};
 					$scope.excludedSantas = function(self) {
 						var out = [];
@@ -56,11 +60,12 @@
 							});
 							s.selected = undefined;
 						});
-						return $http.post("http://localhost:3000/santa/", $scope.santas).then(function(r) {
-							console.log(r);
+						$http.post("http://localhost:3000/santa/", $scope.santas).then(function(r) {
+							$scope.response = "Santa list generated";
 						}, function(e) {
-							console.log(e)
+							$scope.response = "Santa list failed";
 						});
+						$scope.santas = null;
 					}
 				});
 		</script>

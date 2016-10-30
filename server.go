@@ -41,13 +41,11 @@ func calcSantas(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if (itterations == MAXITTERATIONS) {
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 			w.WriteHeader(417)
 		} else {
 			w.WriteHeader(200)
-			w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+			printSantas(santas)
 		}
-		json.NewEncoder(w).Encode(fmt.Sprintf("{itterations: %d}", itterations))
 	}
 }
 
@@ -106,6 +104,29 @@ func printSantas(santas []Santa) {
 	for i := range santas {
 			fmt.Printf("%s gives to %s \n", santas[i].Name, santas[santas[i].Selected].Name)
 		}
+}
+
+// Send sms with 49elks API
+func sendSMS(from Santa, to Santa) {
+	data := url.Values{
+        "from": {"Tomteverkstan"},
+        "to": {from.Phone},
+        "message":{fmt.Sprintf("Hej %s, du ska köpa ett paket till %s. God jul!", from.Name, to.Name)}}
+
+    req, err := http.NewRequest("POST", "https://api.46elks.com/a1/SMS", bytes.NewBufferString(data.Encode()))
+    req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
+    req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
+    req.SetBasicAuth("<API Username>", "<API Password>")
+
+    client := &http.Client{}
+    resp, err := client.Do(req)
+
+    defer resp.Body.Close()
+    _, err := ioutil.ReadAll(resp.Body)
+
+    if err != nil {
+        fmt.Println("Oh dear!!!")
+    }
 }
 
 // Main function
