@@ -114,7 +114,8 @@ func printSantas(santas []Santa) {
 
 // Send sms with 49elks API
 func sendSMS(from Santa, to Santa) {
-	fmt.Printf("Sending sms to %s on %s", from.Name, from.Phone)
+	fmt.Printf("Sending sms to %s on %s \n", from.Name, from.Phone)
+	var message = fmt.Sprintf(`❄️❄️❄️❄️❄️❄️❄️❄️❄️❄️ Hej %s, du har blivit vald till hemlig-🎅 åt %s. Det betyder att du ska ge en julklapp för ca 500kr till %s. ☃️🎄🎁God jul! 🎁🎄☃️`, from.Name, to.Name, to.Name)
 	data := url.Values{
         "from": {"Nordpolen"},
         "to": {from.Phone},
