@@ -15,7 +15,7 @@
 			<button ng-click="addSanta()">Add santa</button>
 			<li style="list-style-type:none">
 				<ul ng-repeat="santa in santas">
-					<p>🎅 &ensp;{{santa.name}}&nbsp;<input type="checkbox" ng-model="santa.selected"> {{mapSantaNames(santa.exclude)}} <button ng-click="updateExcluded(santa)">Update</button></p>
+					<p>🎅 &ensp;{{santa.name}}&nbsp;<input type="checkbox" ng-model="santa.selected">({{santa.phone}}) {{mapSantaNames(santa.exclude)}} <button ng-click="updateExcluded(santa)">Update</button></p>
 				</ul>
 			</li>
 			<br>
@@ -65,7 +65,8 @@
 						}, function(e) {
 							$scope.response = "Santa list failed";
 						});
-						$scope.santas = null;
+						$scope.idItterator = 0;
+						$scope.santas = [];
 					}
 				});
 		</script>

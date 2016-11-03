@@ -47,8 +47,10 @@ func calcSantas(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(417)
 		} else {
 			w.WriteHeader(200)
-			printSantas(santas)
-			sendSMS(santas[0], santas[1])
+			// Send sms to all santas
+			for i := range santas {
+				sendSMS(santas[i], santas[santas[i].Selected])
+			}
 		}
 	}
 }
