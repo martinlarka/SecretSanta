@@ -109,7 +109,7 @@ func intInArray(a int, list []int) bool {
 func printSantas(santas []Santa) {
 	for i := range santas {
 			fmt.Printf("%s gives to %s \n", santas[i].Name, santas[santas[i].Selected].Name)
-		}
+	}
 }
 
 // Send sms with 49elks API
@@ -118,7 +118,7 @@ func sendSMS(from Santa, to Santa) {
 	data := url.Values{
         "from": {"Nordpolen"},
         "to": {from.Phone},
-        "message":{fmt.Sprintf("Hej %s, du ska köpa ett paket till %s. God jul! 🎅🎅🎅🎅", from.Name, to.Name)}} 
+        "message":{message}} 
   req, err := http.NewRequest("POST", "https://api.46elks.com/a1/SMS", bytes.NewBufferString(data.Encode()))
   req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
   req.Header.Add("Content-Length", strconv.Itoa(len(data.Encode())))
@@ -128,12 +128,11 @@ func sendSMS(from Santa, to Santa) {
   resp, err := client.Do(req)
 
   defer resp.Body.Close()
-  body, err := ioutil.ReadAll(resp.Body)
+  _, err = ioutil.ReadAll(resp.Body)
 
   if err != nil {
       fmt.Println("Oh dear!!!")
-	}
-	fmt.Println(string(body))
+	} 
 }
 
 // Main function
